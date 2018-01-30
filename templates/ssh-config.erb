@@ -1,0 +1,13 @@
+Host *
+    PasswordAuthentication no
+    CheckHostIP no
+    StrictHostKeyChecking no
+<% @ssh_config_hosts.each do |host,options| -%>
+Host <%= host %>
+    <%- options.each do |option| -%>
+    <%= option %>
+    <%- end -%>
+    PasswordAuthentication no
+    CheckHostIP no
+    StrictHostKeyChecking no
+<% end -%>

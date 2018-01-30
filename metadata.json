@@ -1,0 +1,15 @@
+{
+  "name": "thias-f3backup",
+  "version": "0.1.0",
+  "author": "thias",
+  "summary": "Puppet full-host over ssh backup module",
+  "license": "Apache-2.0",
+  "source": "https://github.com/thias/puppet-f3backup",
+  "project_page": "https://github.com/thias/puppet-f3backup",
+  "issues_url": "https://github.com/thias/puppet-f3backup",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ],
+  "data_provider": null
+}
+
