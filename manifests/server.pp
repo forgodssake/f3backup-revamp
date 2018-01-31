@@ -1,10 +1,10 @@
 class f3backup::server (
   # Name for the client resources to realize
-  $backup_server             = [ 'default' ],
+  Array[String] $backup_server             = [ 'default' ],
   # Home directory of the backup user
-  Array[String] $backup_home               = '/backup',
+  String $backup_home               = '/backup',
   # Main f3backup.ini options
-  Integer $threads                   = '5',
+  Integer $threads                   = 5,
   String $lognameprefix             = '%Y%m%d-',
   String $rdiff_global_exclude_file = '/etc/f3backup-exclude.txt, /backup/f3backup/%server%/exclude.txt',
   String $rdiff_user                = 'root',
@@ -16,6 +16,8 @@ class f3backup::server (
   String $cron_minute               = '00',
   String $cron_weekday              = '*',
   String $cron_mailto               = 'root',
+  # ssh config entries
+  Hash $ssh_config_hosts            = {},
 ) {
 
   # TODO:
