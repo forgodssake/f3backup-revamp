@@ -59,15 +59,15 @@ class f3backup (
   $command_to_execute = '/bin/true',
 
   # Package parameters
-  String $package_ensure,
-  Boolean $package_manage,
-  Array[String] $package_name,
+  String $package_ensure = 'present',
+  Boolean $package_manage = true,
+  String $package_name = 'rdiff-backup',
 ) {
 
   contain f3backup::install
   contain f3backup::config
 
-  Class['::f3backup::install'] ->
-  Class['::f3backup::config'] ~>
+  Class['::f3backup::install']
+  -> Class['::f3backup::config']
 }
 

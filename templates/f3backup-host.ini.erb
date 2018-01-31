@@ -2,34 +2,34 @@
 
 [default]
 ; Default priority (lower value means higher priority)
-priority = <%= @f3backup::priority %>
+priority = <%= scope['f3backup::priority'] %>
 
 ; Different types of backup. Will be done in the same order as specified here.
 ; Valid options: rdiff-backup, mysql, command
-backups = <% if @f3backup::backup_rdiff %>rdiff-backup, <% end %><% if @f3backup::backup_command %>command<% end %>
-<% if @f3backup::backup_rdiff -%>
+backups = <% if scope['f3backup::backup_rdiff'] %>rdiff-backup, <% end %><% if scope['f3backup::backup_command'] %>command<% end %>
+<% if scope['f3backup::backup_rdiff'] -%>
 
 [rdiff-backup]
-<% if @f3backup::rdiff_global_exclude_file -%>
-global-exclude-file = <%= @f3backup::rdiff_global_exclude_file %>
+<% if scope['f3backup::rdiff_global_exclude_file'] -%>
+global-exclude-file = <%= scope['f3backup::rdiff_global_exclude_file'] %>
 <% end -%>
-<% if @f3backup::rdiff_user -%>
-user = <%= @f3backup::rdiff_user %>
+<% if scope['f3backup::rdiff_user'] -%>
+user = <%= scope['f3backup::rdiff_user'] %>
 <% end -%>
-<% if @f3backup::rdiff_path -%>
-path = <%= @f3backup::rdiff_path %>
+<% if scope['f3backup::rdiff_path'] -%>
+path = <%= scope['f3backup::rdiff_path'] %>
 <% end -%>
 
 ; Optional extra parameters for rdiff-backup
-extra-parameters = <%= @f3backup::rdiff_extra_parameters %>
+extra-parameters = <%= scope['f3backup::rdiff_extra_parameters'] %>
 
 ; How long backups are going to be kept
-keep = <%= @f3backup::rdiff_keep %>
+keep = <%= scope['f3backup::rdiff_keep'] %>
 <% end -%>
-<% if @f3backup::command_to_execute -%>
+<% if scope['f3backup::command_to_execute'] -%>
 
 [command]
 ; Run a specific command on the backup server after the backup has finished
-command = <%= @f3backup::command_to_execute %>
+command = <%= scope['f3backup::command_to_execute'] %>
 <% end -%>
 
