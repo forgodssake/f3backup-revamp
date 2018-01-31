@@ -23,7 +23,6 @@ class f3backup::server (
   # TODO:
   # Virtual resource for the ssh key to be realized on nodes to be backed up
   # command="rdiff-backup --server --restrict-read-only /",from="${backserver}",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty
-  contain f3backup::install
 
   $backup_server.each |$server| {
     # Virtual resources created by backup clients
