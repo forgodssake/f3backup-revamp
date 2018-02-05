@@ -1,6 +1,6 @@
 class f3backup::server (
   # Name for the client resources to realize
-  Array[String] $backup_server             = [ 'default' ],
+  Array[String] $backup_server      = [ 'default' ],
   # Home directory of the backup user
   String $backup_home               = '/backup',
   # Main f3backup.ini options
@@ -17,6 +17,7 @@ class f3backup::server (
   String $cron_weekday              = '*',
   String $cron_mailto               = 'root',
   # ssh config entries
+  Array[String] $ssh_config         = [ '' ],
   Hash $ssh_config_hosts            = {},
 ) {
 
