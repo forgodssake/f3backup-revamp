@@ -3,8 +3,11 @@ class f3backup::server (
   Array[String] $backup_server      = [ 'default' ],
   # Home directory of the backup user
   String $backup_home               = '/backup',
+  # Ssh Key
+  Optional[String] $source_ssh_key  = undef,
+  Optional[String] $source_ssh_pub  = undef,
   # Main f3backup.ini options
-  Integer $threads                   = 5,
+  Integer $threads                  = 5,
   String $lognameprefix             = '%Y%m%d-',
   String $rdiff_global_exclude_file = '/etc/f3backup-exclude.txt, /backup/f3backup/%server%/exclude.txt',
   String $rdiff_user                = 'root',
@@ -74,18 +77,37 @@ class f3backup::server (
     require => User['backup'];
   }
 
-  # TODO: Create param with ssh key
-  # Create the backup user's ssh key pair
-  # Note that the pubkey needs to be set in the client
-  exec { 'Creating key pair for user backup':
-    command => "/usr/bin/ssh-keygen -b 2048 -t rsa -f ${backup_home}/.ssh/id_rsa -N ''",
-    user    => 'backup',
-    group   => 'backup',
-    require => [
-      User['backup'],
-      File["${backup_home}/.ssh"],
-    ],
-    creates => "${backup_home}/.ssh/id_rsa",
+  # Check if the ssh key is being provided
+  if $source_ssh_key and $source_ssh_pub {
+    file { "${backup_home}/.ssh/id_rsa":
+      owner   => 'backup',
+      group   => 'backup',
+      mode    => '0600',
+      source  => $source_ssh_key,
+      require => File["${backup_home}/.ssh"],
+    }
+    file { "${backup_home}/.ssh/id_rsa.pub":
+      owner   => 'backup',
+      group   => 'backup',
+      mode    => '0600',
+      source  => $source_ssh_pub,
+      require => File["${backup_home}/.ssh"],
+    }
+  # no xor in puppet so we'll count how many non-undef values we have and fail if it's 1
+  } elsif count([$source_ssh_key,$source_ssh_pub]) == 1 {
+    fail("Please setup both \$source_ssh_key and \$source_ssh_pub or none, but not just one.")
+  } else {
+    # Otherwise, create it
+    exec { 'Creating key pair for user backup':
+      command => "/usr/bin/ssh-keygen -b 2048 -t rsa -f ${backup_home}/.ssh/id_rsa -N ''",
+      user    => 'backup',
+      group   => 'backup',
+      require => [
+        User['backup'],
+        File["${backup_home}/.ssh"],
+      ],
+      creates => "${backup_home}/.ssh/id_rsa",
+    }
   }
 
   if versioncmp($::operatingsystemrelease, '7') >= 0 {
