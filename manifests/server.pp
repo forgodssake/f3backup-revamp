@@ -3,9 +3,10 @@ class f3backup::server (
   Array[String] $backup_server      = [ 'default' ],
   # Home directory of the backup user
   String $backup_home               = '/backup',
-  # Ssh Key
+  # Ssh params
   Optional[String] $source_ssh_key  = undef,
   Optional[String] $source_ssh_pub  = undef,
+  Array $ssh_addresses              = [ $::ipaddress, $::ipaddress6 ],
   # Main f3backup.ini options
   Integer $threads                  = 5,
   String $lognameprefix             = '%Y%m%d-',
@@ -27,12 +28,24 @@ class f3backup::server (
   # TODO:
   # Virtual resource for the ssh key to be realized on nodes to be backed up
   # command="rdiff-backup --server --restrict-read-only /",from="${backserver}",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty
+  $server_addresses = join(delete_undef_values($ssh_addresses),',')
 
   $backup_server.each |$server| {
     # Virtual resources created by backup clients
     File <<| tag == "f3backup-${server}" |>>
     Concat <<| tag == "f3backup-${server}" |>>
     Concat::Fragment <<| tag == "f3backup-${server}" |>>
+
+    if getvar('::f3backup_ssh_key') {
+      @@ssh_authorized_key { "f3backup-${::fqdn}-${server}":
+        ensure  => present,
+        user    => $rdiff_user,
+        type    => 'ssh-rsa',
+        key     => $::f3backup_ssh_key,
+        options => [ 'command="rdiff-backup --server --restrict-read-only /"',"from=\"${server_addresses}\"",'no-port-forwarding','no-agent-forwarding','no-X11-forwarding','no-pty'],
+        tag     => "f3backup-sshkey-${server}",
+      }
+    }
   }
 
   # Useful to save space across backups of identical OSes
