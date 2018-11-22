@@ -1,47 +1,99 @@
 # Class: f3backup
 # ===========================
 #
-# Full description of class f3backup here.
+# f3backup client class.
+# To be used on all servers that need to be backed up.
+# Parameters available to override server defaults.
 #
 # Parameters
 # ----------
 #
-# Document parameters here.
+# General configuration
 #
-# * `sample parameter`
-# Explanation of what this parameter affects and what it defaults to.
-# e.g. "Specify one or more upstream ntp servers as an array."
+# [*backup_home*]
+# String:
+# Base folder to put the f3backup folder containing all backups.
 #
-# Variables
-# ----------
+# [*backup_server*]
+# String:
+# Backup server that should perform backups on this servers.
+# Multiple backup servers can backup the same id so backups are in different physical servers.
+# Also you can split backups in different servers by configuring clients & servers with different ids.
 #
-# Here you should define a list of variables that this module would require.
+# [*myname*]
+# String:
+# Name of the server.
+# Must be unique among the backup server.
 #
-# * `sample variable`
-#  Explanation of how this variable affects the function of this class and if
-#  it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#  External Node Classifier as a comma separated list of hostnames." (Note,
-#  global variables should be avoided in favor of class parameters as
-#  of Puppet 2.6.)
+# [*ensure*]
+# String:
+# Ensure class is present or absent.
+# Set to absent in servers to avoid errors while trying to backup himself.
+#
+# Client parameters that override default backup config
+#
+# [*backup_rdiff*]
+# Boolean:
+# Perform rdiff backup.
+#
+# [*backup_command*]
+# Boolean:
+# Perform command backup.
+#
+# [*priority*]
+# Integer:
+# Priority to perform the backup.
+#
+# [*rdiff_keep*]
+# String:
+# Time to keep backups.
+#
+# [*rdiff_global_exclude_file*]
+# String:
+# File with globally excluded files.
+#
+# [*rdiff_user*]
+# String:
+# User to use when performing the rdiff backups.
+#
+# [*rdiff_path*]
+# String:
+# Base path for the rdiff backup.
+#
+# [*rdiff_extra_parameters*]
+# String:
+# Extra parameters to pass to the rdiff backup.
+#
+# [*command_to_execute*]
+# String:
+# Command to execute when performing the command backup.
+#
+# Package parameters
+#
+# [*package_ensure*]
+# String:
+# Ensure the package is present (installed) or absent (uninstalled).
+#
+# [*package_manage*]
+# String:
+# Chooses whether the rdiff-backup package should be managed by puppet.
+#
+# [*package_name*]
+# String:
+# Sets the name of the rdiff-backup package.
 #
 # Examples
 # --------
 #
-# @example
-#    class { 'f3backup':
-#      servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#    }
+#  Simplest case:
+#  class { '::f3backup': }
 #
-# Authors
-# -------
-#
-# Author Name <author@domain.com>
-#
-# Copyright
-# ---------
-#
-# Copyright 2018 Your name here, unless otherwise noted.
-#
+#  Backup to non-default server and keep for 6 Months
+#  class { '::f3backup':
+#    backup_server => 'long-retention',
+#    rdiff_keep    => '6M',
+#  }
+
 class f3backup (
   $backup_home   = '/backup',
   $backup_server = 'default',

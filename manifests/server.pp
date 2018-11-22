@@ -1,3 +1,109 @@
+# Class: f3backup::server
+# ========================
+#
+# f3backup server class
+# Configures f3backup servers that will perform the backups.
+#
+# Parameters
+# -----------
+#
+# [*backup_home*]
+# String:
+# Base folder to put the f3backup folder containing all backups.
+#
+# [*backup_server*]
+# String:
+# Backup server that should perform backups on this servers.
+# Multiple backup servers can backup the same id so backups are in different physical servers.
+# Also you can split backups in different servers by configuring clients & servers with different ids.
+#
+# [*source_ssh_key*]
+# String:
+# Optional source of ssh key to be used on this server.
+# This parameter requires to also set source_ssh_pub.
+#
+# [*source_ssh_pub*]
+# String:
+# Optional source of ssh public key to be exported to all clients.
+# This parameter requires to also set source_ssh_key.
+#
+# [*ssh_addresses*]
+# Array of Strings:
+# List of IP addresses that will be used to connect to perform the backups.
+#
+# Default backup config
+#
+# [*threads*]
+# Integer:
+# Number of parallel backups to run.
+#
+# [*lognameprefix*]
+# String:
+# Prefix to use with logs.
+#
+# [*rdiff_global_exclude_file*]
+# String:
+# File with globally excluded files.
+#
+# [*rdiff_user*]
+# String:
+# User to use when performing the rdiff backups.
+#
+# [*rdiff_path*]
+# String:
+# Base path for the rdiff backup.
+#
+# [*rdiff_extra_parameters*]
+# String:
+# Extra parameters to pass to the rdiff backup.
+#
+# [*command_to_execute*]
+# String:
+# Command to execute when performing the command backup.
+#
+# Cron job options
+#
+# [*cron_hour*]
+# String:
+# Hour to execute the backup cronjob.
+#
+# [*cron_minute*]
+# String:
+# minute to execute the backup cronjob.
+#
+# [*cron_weekday*]
+# String:
+# weekday to execute the backup cronjob.
+#
+# [*cron_mailto*]
+# String:
+# mail address to send report when backups fail.
+#
+# Ssh configuration
+#
+# [*ssh_config*]
+# Array of Strings:
+# List of ssh options to add for every host.
+#
+# [*ssh_config_hosts*]
+# Hash of Array of Strings:
+# Key will be used for host name and Array of Strings for list of options.
+# Hash of options for specific hosts.
+#
+# Examples
+# ---------
+#
+# Simplest case:
+# class { '::f3backup::server': }
+#
+# Backing up all company servers, server has multiple ips to backup and setting ssh keys.
+# class { '::f3backup::server':
+#   backup_server  => [ 'default', 'long-retention', 'officeA-servers' ],
+#   source_ssh_key => "puppet:///modules/${module_name}/id_rsa",
+#   source_ssh_pub => "puppet:///modules/${module_name}/id_rsa.pub",
+#   ssh_addresses  => [ $::ipaddress, $::ipaddress6, '10.1.2.3', '192.168.2.3' ],
+# }
+
 class f3backup::server (
   # Name for the client resources to realize
   Array[String] $backup_server      = [ 'default' ],
@@ -25,9 +131,6 @@ class f3backup::server (
   Hash $ssh_config_hosts            = {},
 ) {
 
-  # TODO:
-  # Virtual resource for the ssh key to be realized on nodes to be backed up
-  # command="rdiff-backup --server --restrict-read-only /",from="${backserver}",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty
   $server_addresses = join(delete_undef_values($ssh_addresses),',')
 
   $backup_server.each |$server| {

@@ -1,5 +1,9 @@
-# @api private
-# This class handles f3backup packages. Avoid modifying private classes.
+# Class: f3backup::install
+# ===========================
+#
+# private class to be included by init
+#
+
 class f3backup::install {
 
   if $f3backup::package_manage {

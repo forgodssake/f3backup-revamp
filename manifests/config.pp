@@ -1,3 +1,9 @@
+# Class: f3backup::config
+# ===========================
+#
+# private class to be included by init
+#
+
 class f3backup::config {
 
   if $f3backup::ensure != 'absent' {

@@ -1,3 +1,25 @@
+# Class: f3bakcup::exclude
+# ==================================
+#
+# Configure directories to be excluded from backup
+#
+# Parameters
+# -----------
+#
+# Definition title:
+# String:
+# Folder to exclude based on rdiff-backup globbing patterns.
+#
+# Examples
+# --------
+#
+# @example
+#   f3backup::exclude { [
+#       '/var/www/**',
+#       '/tmp/*',
+#     ]:
+#   }
+
 define f3backup::exclude {
   include '::f3backup'
 
